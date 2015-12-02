@@ -1,0 +1,24 @@
+{
+  "name": "pnsk-structured-editor",
+  "license": "MIT",
+  "authors": [
+    "Tolan Blundell <tolan@patternseek.net>"
+  ],
+  "description": "A structured content editor in a similar vein to Sir Trevor but built around web components using Polymer.",
+  "keywords": [
+    "web-component"
+  ],
+  "main": "pnsk-structured-editor.html",
+  "homepage": "https://github.com/patternseek/pnsk-structured-editor/",
+  "ignore": [
+    "/.*",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "~1.2.3",
+    "Sortable": "RubaXa/Sortable#~1.4.2"
+  },
+  "devDependencies": {
+    "web-component-tester": "~3.4.0"
+  }
+}

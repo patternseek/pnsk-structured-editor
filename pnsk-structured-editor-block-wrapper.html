@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="pnsk-structured-editor-block-wrapper">
+
+    <template>
+
+        <style>
+            :host {
+                display: block;
+                box-sizing: border-box;
+                padding: 8px;
+                border: 1px solid black;
+            }    
+        </style>
+        
+        
+        <content></content>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-block-wrapper',
+        properties: {
+
+
+
+        },
+
+        /**
+         * The block wrapped by this... wrapper
+         */
+        _wrapped: null,
+        
+        wrap: function( block ){
+            //if( typeof block.exportStateJson !== "function" ) {
+            //    throw type + " is not a valid pnsk-structured-editor block type as it doesn't support the exportStateJson function.";
+            //}
+            if( null !== this._wrapped ) {
+                throw "Can't call wrap() more than once.";
+            }
+            this._wrapped = block;
+            Polymer.dom( this ).appendChild( this._wrapped );
+        },
+        
+        // Element Lifecycle
+
+        ready: function () {
+ 
+        },
+
+    });
+
+</script>

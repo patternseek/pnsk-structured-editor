@@ -1,0 +1,129 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../Sortable/Sortable.html">
+<link rel="import" href="./pnsk-structured-editor-block-wrapper.html">
+
+<dom-module id="pnsk-structured-editor">
+
+    <template>
+        <sortable-js animation="150" on-end="handleDragEnd" handle=".sortable" id="sortable"></sortable-js>
+        <content></content>
+    </template>
+
+</dom-module>
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor',
+        properties: {
+
+
+
+        },
+
+        /**
+         * The blocks contained by the editor
+         */
+        _blocks: [],
+
+        handleDragEnd: function ( e ) {
+            this._moveBlock( e.oldIndex, e.newIndex )
+        },
+        
+        /**
+         *
+         * @param string type
+         * @param int toIndex
+         */
+        addBlock: function( type, atIndex ){
+            if( ( atIndex > this._blocks.length ) || ( atIndex < 0 ) ){
+                throw "Invalid index: " + atIndex + " for block list with "+this._blocks.length+" entries. In pnsk-structured-editor.addBlock().";
+            }
+            var newBlock = document.createElement( type );
+            var wrapper = document.createElement( "pnsk-structured-editor-block-wrapper" );
+            // wrap() enforces type of newBlock
+            wrapper.wrap( newBlock );
+            wrapper.classList.add( "sortable" );
+            
+            // Add to DOM
+            this._domSetAtIndex( wrapper, atIndex );
+            
+            // Add to blocklist
+            this._blocks.splice( atIndex, 0, wrapper );
+            this._updateBlockIds();
+        },
+
+        /**
+         * Move a block to a new index. 
+         * toIndex should refer to the position to move to based on the indices before the block is removed. As it will
+         * be inserted to its new position before being removed from its old position.
+         * 
+         * @param int fromIndex
+         * @param int toIndex
+         */
+        _moveBlock: function( fromIndex, toIndex ){
+            var numBlocks = this._blocks.length;
+            if( ( toIndex > numBlocks ) || ( toIndex < 0 ) ){
+                throw "Invalid toIndex: " + toIndex + " for block list with "+numBlocks+" entries. In pnsk-structured-editor.movelock().";
+            }
+            if( ( fromIndex > numBlocks - 1 ) || ( fromIndex < 0 ) ){
+                throw "Invalid fromIndex: " + fromIndex + " for block list with "+numBlocks+" entries. In pnsk-structured-editor.movelock().";
+            }
+            // No-op
+            if( fromIndex == toIndex ){
+                return;
+            }
+            
+            // Copy DOM element
+            var moveBlock = this._getBlock(fromIndex);
+            ///moveBlock.id = "moving-block";
+            ///this._domRemove( moveBlock );
+            // This is OK as the block with toIndex will still hold its old index
+            ///this._domSetAtIndex( moveBlock, toIndex );
+            
+            // 'Copy' to new index in blocks list
+            var addAtIndex = toIndex;
+            if( toIndex > fromIndex ){
+                toIndex = toIndex + 1;
+            }
+            this._blocks.splice( toIndex, 0, moveBlock );
+
+            // Calculate new index for copy to be removed
+            // Old index will have increased after insert.
+            var deleteIndex = fromIndex;
+            if( toIndex < fromIndex ){
+                deleteIndex = fromIndex + 1;
+            }
+            // Delete from old index in block list
+            this._blocks.splice( deleteIndex, 1 );
+
+            this._updateBlockIds();
+        },
+        
+        _updateBlockIds: function(){
+            for( var index in this._blocks ){
+                this._blocks[index].id = "block_"+index;
+            }
+        },
+        _getBlock: function(fromIndex) {
+            return this._blocks[fromIndex];
+        },
+        _domSetAtIndex: function( block, toIndex ){
+            if( toIndex >= this._blocks.length ){
+                this.$.sortable.appendChild( block );
+            }else{
+                this.$.sortable.insertBefore( block, this.$$("#block_"+ toIndex) );
+            }
+        },
+        _domRemove: function( block ){
+            this.$.sortable.removeChild( block );
+        },
+        
+        // Element Lifecycle
+
+        ready: function () {
+            
+        },
+
+    });
+
+</script>

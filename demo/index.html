@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>pnsk-structured-editor</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script>
+        window.Polymer = window.Polymer || {};
+        window.Polymer.dom = 'shadow';
+    </script>
+    <link rel="import" href="../pnsk-structured-editor.html">
+    
+</head>
+<body>
+
+    <form action="">
+
+        <pnsk-structured-editor>
+            <input type="text" name="editor-output">
+        </pnsk-structured-editor>
+
+        <br>
+        <input type="submit">
+    </form>
+
+    <script>
+        window.addEventListener("WebComponentsReady", function(){
+            var el = document.querySelector('pnsk-structured-editor');
+            el.addBlock( "p", 0 );
+            el.addBlock( "a", 0 );
+            el.addBlock( "a", 0 );
+            el.addBlock( "a", 0 );
+            alert( el );
+        });
+        
+    </script>
+
+</body>
+</html>
