@@ -1,0 +1,56 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<template id="pnsk-structured-editor-legacy-html" noshadowroot>
+    <textarea rows="3" cols="30" class="legacyhtmlbox"></textarea>
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-legacy-html',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-legacy-html'),
+
+        dataType: "legacy-html",
+
+        getState: function () {
+            return this.root.querySelector(".legacyhtmlbox").value;
+        },
+
+        setState: function (state) {
+            this.root.querySelector(".legacyhtmlbox").value = state;
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this.updateHeight();
+        },
+
+        updateHeight: function () {
+            var textBox = this.qs("textarea");
+            if (textBox.clientHeight == textBox.scrollHeight) {
+                textBox.style.height = "auto";
+            }
+            textBox.style.height = textBox.scrollHeight + 'px'
+        },
+
+        // Element Lifecycle
+
+        created: function () {
+            this.root.querySelector(".legacyhtmlbox").addEventListener("change", this._onChange.bind(this));
+            this.root.querySelector(".legacyhtmlbox").addEventListener("keyup", this._onChange.bind(this));
+            this.root.querySelector(".legacyhtmlbox").addEventListener("paste", this._onChange.bind(this));
+            this.root.querySelector(".legacyhtmlbox").addEventListener("cut", this._onChange.bind(this));
+
+        },
+
+        attached: function () {
+            this.updateHeight();
+        }
+
+    });
+
+</script>

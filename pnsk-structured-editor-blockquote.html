@@ -1,0 +1,57 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+<link rel="import" href="../pnsk-structured-editor-prosemirror/pnsk-structured-editor-prosemirror.html">
+
+<template id="pnsk-structured-editor-blockquote" noshadowroot>
+        <span class="inputswrapper">
+            <label>
+                Quote
+                <pnsk-structured-editor-prosemirror class="quote"></pnsk-structured-editor-prosemirror>
+            </label>
+            <label>
+                Cite
+                <input class="cite" type="text">
+            </label>
+        </span>
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-blockquote',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-blockquote'),
+
+        dataType: "blockquote",
+
+        getState: function () {
+            return {
+                quote: this.qs(".quote").getState().markdown,
+                cite: this.qs(".cite").value
+            }
+        },
+
+        setState: function (state) {
+            this.qs(".cite").value = state.cite;
+            this.qs(".quote").setState({'markdown': state.quote});
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+        },
+
+        // Element Lifecycle
+
+        created: function () {
+            this.root.querySelector(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.root.querySelector(".inputswrapper").addEventListener("keyup", this._onChange.bind(this));
+            this.root.querySelector(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+            this.root.querySelector(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+
+        }
+
+    });
+
+</script>

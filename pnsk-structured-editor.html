@@ -1,47 +1,266 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../Sortable/Sortable.html">
+<link rel="import" href="../polymer/polymer-micro.html">
 <link rel="import" href="./pnsk-structured-editor-block-wrapper.html">
+<script src="bower_components/requirejs/require.js"></script>
 
-<dom-module id="pnsk-structured-editor">
+<style>
+    pnsk-structured-editor {
+        display: block;
+        overflow: auto;
+        font-family: sans-serif;
+    }
 
-    <template>
-        <sortable-js animation="150" on-end="handleDragEnd" handle=".sortable" id="sortable"></sortable-js>
-        <content></content>
-    </template>
+    pnsk-structured-editor label {
+        display: block;
+        font-size: 12px;
+        color: white;
+    }
 
-</dom-module>
+    pnsk-structured-editor label input,
+    pnsk-structured-editor label select,
+    pnsk-structured-editor label textarea {
+        width: 360px;
+    }
+
+    pnsk-structured-editor label input,
+    pnsk-structured-editor label select,
+    pnsk-structured-editor label textarea,
+    pnsk-structured-editor pnsk-structured-editor-prosemirror {
+        margin: 4px 0px 12px 0px;
+        display: block;
+    }
+
+    pnsk-structured-editor button,
+    pnsk-structured-editor select,
+    pnsk-structured-editor input {
+        background-color: rgb(26, 188, 156);
+        border: medium none;
+        margin: 8px;
+        padding: 7px 6px 4px;
+        border-radius: 3px;
+        color: white;
+    }
+
+    pnsk-structured-editor button {
+        margin: 8px 0;
+    }
+
+    pnsk-structured-editor .addDialogue {
+        visibility: hidden;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        z-index: 1000;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    pnsk-structured-editor .addDialogue div {
+        width: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #16A085;
+        text-align: center;
+        border: 2px solid #1ABC9C;
+        border-radius: 4px;
+        padding: 16px;
+    }
+
+    pnsk-structured-editor .addComponent {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    pnsk-structured-editor .sortable-ghost {
+        opacity: 0.2;
+    }
+
+    /** Block wrappers **/
+
+    pnsk-structured-editor-block-wrapper {
+        display: block;
+        box-sizing: border-box;
+        padding: 8px;
+        border: 1px solid darkgray;
+        overflow: auto;
+        border-radius: 4px;
+        background-color: #16a085;
+        margin-bottom: 4px;
+    }
+
+    pnsk-structured-editor-block-wrapper .drag-handle,
+    pnsk-structured-editor-block-wrapper .add-component {
+        margin: 4px;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    pnsk-structured-editor-block-wrapper .minimise,
+    pnsk-structured-editor-block-wrapper .maximise {
+        margin-top: 2px;
+        margin-right: 4px;
+    }
+
+    pnsk-structured-editor-block-wrapper .block-controls {
+        float: right;
+        margin-right: 4px;
+    }
+
+    pnsk-structured-editor-block-wrapper .wrapped {
+        display: inline-block;
+        width: 85%;
+    }
+
+    pnsk-structured-editor-block-wrapper .block-collapse {
+        max-height: 0;
+        transition: max-height 0.15s ease-out;
+        overflow: hidden;
+    }
+
+    pnsk-structured-editor-block-wrapper .block-collapse.visible {
+        max-height: 1000px;
+        transition: max-height 0.25s ease-in;
+    }
+
+    pnsk-structured-editor-block-wrapper .minimise {
+        display: none;
+        float: right;
+    }
+
+    pnsk-structured-editor-block-wrapper .maximise {
+        float: right;
+    }
+
+    pnsk-structured-editor-block-wrapper textarea {
+        width: 100%;
+        border: none;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    pnsk-structured-editor-block-wrapper h3 {
+        font-size: 14px;
+        margin: 5px 0px 3px 5px;
+        text-align: left;
+        color: white;
+        font-weight: normal;
+        font-size: 17px;
+    }
+
+    pnsk-structured-editor-block-wrapper .delete-component {
+        float: right;
+        margin: 2px 5px 0px;
+        display: block;
+    }
+
+    pnsk-structured-editor-block-wrapper .block-header {
+        font-size: 14px;
+        text-align: left;
+        background-color: #1abc9c;
+        border-radius: 3px;
+        padding: 3px;
+        margin: 0px 0px 8px;
+    }
+
+
+</style>
+
+<template id="pnsk-structured-editor" noshadowroot>
+
+    <div class="addDialogue">
+        <div>
+            <form class="addForm">
+                <select class="addType">
+                    <option value="">Select a component type...</option>
+                </select>
+                <input type="hidden" class="addIndex">
+                <button class="addComponentButton">Add component</button>
+                <button class="cancelAddDialogue">Cancel</button>
+            </form>
+        </div>
+    </div>
+    <a class="addComponent" href="#"><img width="24" height="24" title="Add a component at the top" alt=""
+                                          src="data:image/png;base64,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"/></a>
+
+    <div class="sortable"></div>
+
+    <content></content>
+</template>
 
 <script>
     Polymer({
         is: 'pnsk-structured-editor',
+
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor'),
+
         properties: {
 
-
+            availableTypes: Array,
+            disallowedCreationTypes: Array
 
         },
-
+        
         /**
          * The blocks contained by the editor
          */
         _blocks: [],
 
-        handleDragEnd: function ( e ) {
-            this._moveBlock( e.oldIndex, e.newIndex )
+        _typeHandlers: {},
+
+        thisDir: currentImportURL.substring(0, currentImportURL.lastIndexOf("/")),
+
+        // Core component functionality
+
+        /**
+         * Update the wrapped input with the current state of the editor blocks
+         */
+        _handleStateChanged: function () {
+            var output = [];
+            for (var index = 0; index < this._blocks.length; index++) {
+                output.push({type: this._blocks[index].dataType, data: this._blocks[index].getState()});
+            }
+            this.querySelector(".editorstate").value = JSON.stringify(output);
         },
-        
+
         /**
          *
-         * @param string type
-         * @param int toIndex
+         * @param type
+         * @param atIndex
+         * @param data Optional
          */
-        addBlock: function( type, atIndex ){
+        addBlock: function (typeInfo, atIndex, data) {
             if( ( atIndex > this._blocks.length ) || ( atIndex < 0 ) ){
                 throw "Invalid index: " + atIndex + " for block list with "+this._blocks.length+" entries. In pnsk-structured-editor.addBlock().";
             }
-            var newBlock = document.createElement( type );
+
+            var elem = typeInfo.element;
+            var lable = typeInfo.lable;
+
+            var newBlock = document.createElement(elem);
+
+            // Add change listener
+            newBlock.addEventListener('pnsk-component-stateChanged', this._handleStateChanged.bind(this), false);
+
+            if (typeInfo.config) {
+                for (var cI in typeInfo.config) {
+                    newBlock[cI] = typeInfo.config[cI];
+                }
+
+            }
+            
             var wrapper = document.createElement( "pnsk-structured-editor-block-wrapper" );
             // wrap() enforces type of newBlock
-            wrapper.wrap( newBlock );
+            wrapper.setEditor(this);
+            wrapper.wrap(newBlock, lable);
+            if (typeof data !== "undefined") {
+                wrapper.setState(data);
+            }
             wrapper.classList.add( "sortable" );
             
             // Add to DOM
@@ -50,6 +269,14 @@
             // Add to blocklist
             this._blocks.splice( atIndex, 0, wrapper );
             this._updateBlockIds();
+        },
+
+        deleteBlock: function (deleteIndex) {
+            var deleteBlock = this._getBlock(deleteIndex);
+            this._domRemove(deleteBlock);
+            this._blocks.splice(deleteIndex, 1);
+            this._updateBlockIds();
+            this._handleStateChanged();
         },
 
         /**
@@ -97,11 +324,63 @@
             this._blocks.splice( deleteIndex, 1 );
 
             this._updateBlockIds();
+            this._handleStateChanged();
+
         },
+
+        // Element Lifecycle
+
+        attachedCallback: function () {
+
+            // Add component form UI
+            this.querySelector(".addComponentButton").addEventListener('click', this._submitAddComponent.bind(this), false);
+            this.querySelector(".addComponent").addEventListener('click', this._showAddDialogue.bind(this), false);
+            this.querySelector(".cancelAddDialogue").addEventListener('click', this._onClickCloseAddDialogue.bind(this), false);
+            this.addEventListener("keydown", function (evt) {
+                if (this.qs(".addDialogue").style.visibility == "hidden") {
+                    return;
+                }
+                evt = evt || window.event;
+                if (evt.keyCode == 27) {
+                    this.toggleAddDialogue(0);
+                }
+            }.bind(this));
+
+            // Drag and drop
+            this.querySelector(".sortable").addEventListener('end', this._handleDragEnd.bind(this), false);
+
+            this._populateTypeHandlers();
+
+            this._populateAddDialogue();
+
+            var input;
+            try {
+                input = JSON.parse(this.querySelector("input").value);
+            } catch (e) {
+                return;
+            }
+
+            for (var index = 0; index < input.length; index++) {
+                var typeInfo;
+                if (this._typeHandlers[input[index].type]) {
+                    typeInfo = this._typeHandlers[input[index].type];
+                } else {
+                    typeInfo = this._typeHandlers["legacy-html"];
+                }
+                this.addBlock(typeInfo, index, input[index].data);
+            }
+
+            this._startSortable();
+
+
+        },
+
+        // Block manipulation utils
         
         _updateBlockIds: function(){
-            for( var index in this._blocks ){
+            for (var index = 0; index < this._blocks.length; index++) {
                 this._blocks[index].id = "block_"+index;
+                this._blocks[index].setIndex = index;
             }
         },
         _getBlock: function(fromIndex) {
@@ -109,19 +388,92 @@
         },
         _domSetAtIndex: function( block, toIndex ){
             if( toIndex >= this._blocks.length ){
-                this.$.sortable.appendChild( block );
+                this.querySelector(".sortable").appendChild(block);
             }else{
-                this.$.sortable.insertBefore( block, this.$$("#block_"+ toIndex) );
+                this.querySelector(".sortable").insertBefore(block, this.root.querySelector("#block_" + toIndex));
             }
         },
         _domRemove: function( block ){
-            this.$.sortable.removeChild( block );
+            this.querySelector(".sortable").removeChild(block);
         },
-        
-        // Element Lifecycle
 
-        ready: function () {
-            
+        _populateTypeHandlers: function () {
+            for (index in this.availableTypes) {
+                if (this._typeHandlers[this.availableTypes[index].type]) {
+                    throw "Can't define more than one tag to handle a given type.";
+                }
+                this._typeHandlers[this.availableTypes[index].type] = this.availableTypes[index];
+            }
+        },
+
+
+        // UI
+
+        _populateAddDialogue: function () {
+            var select = this.querySelector(".addType");
+            for (index in this.availableTypes) {
+                if (this.disallowedCreationTypes && this.disallowedCreationTypes.indexOf(this.availableTypes[index].type) > -1) {
+                    continue;
+                }
+                var op = document.createElement("option");
+                op.value = this.availableTypes[index].type;
+                op.text = this.availableTypes[index].lable;
+                select.appendChild(op);
+            }
+        },
+
+
+        _startSortable: function () {
+            var bowerpath = this.thisDir + '/../';
+
+            // This doesn't need requirejs, the component forcing it is gone. Not removing now though.
+
+            requirejs.config({
+                paths: {
+                    'Sortable': bowerpath + 'Sortable/Sortable'
+                }
+            });
+
+            var component = this;
+
+            require(['Sortable'], function (Sortable) {
+                component.sortable = Sortable.create(component.querySelector(".sortable"), {
+                    animation: 150,
+                    handle: ".drag-handle"
+                });
+
+            });
+
+        },
+
+        _handleDragEnd: function (e) {
+            this._moveBlock(e.oldIndex, e.newIndex)
+        },
+
+        _showAddDialogue: function (event) {
+            this.toggleAddDialogue(0);
+            event.preventDefault();
+            event.stopPropagation();
+
+        },
+
+        _onClickCloseAddDialogue: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.toggleAddDialogue(0)
+        },
+
+        toggleAddDialogue: function (forIndex) {
+            el = this.querySelector(".addDialogue");
+            el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+            this.querySelector(".addIndex").value = forIndex;
+        },
+
+        _submitAddComponent: function (event) {
+            this.addBlock(this._typeHandlers[this.querySelector(".addType").value], this.querySelector(".addIndex").value);
+            this.toggleAddDialogue();
+            event.preventDefault();
+            event.stopPropagation();
         },
 
     });
