@@ -22,60 +22,60 @@
 // See https://www.polymer-project.org/1.0/docs/devguide/local-dom.html#node-finding.
 // This feature is not available in polymer-micro, so we provide a basic
 // version of this ourselves.
-    function createReferencesToNodesWithIds(instance) {
-        instance.$ = {};
-        var nodesWithIds = instance.root.querySelectorAll('[id]');
-        [].forEach.call(nodesWithIds, function (node) {
-            var id = node.getAttribute('id');
-            instance.$[id] = node;
-        });
-    }
+function createReferencesToNodesWithIds(instance) {
+    instance.$ = {};
+    var nodesWithIds = instance.root.querySelectorAll('[id]');
+    [].forEach.call(nodesWithIds, function (node) {
+        var id = node.getAttribute('id');
+        instance.$[id] = node;
+    });
+}
 
 // Invoke basic style shimming with ShadowCSS.
-    function shimTemplateStyles(template, tag) {
-        if (window.ShadowDOMPolyfill) {
-            WebComponents.ShadowCSS.shimStyling(template.content, tag);
-        }
-        template._initialized = true;
+function shimTemplateStyles(template, tag) {
+    if (window.ShadowDOMPolyfill) {
+        WebComponents.ShadowCSS.shimStyling(template.content, tag);
     }
+    template._initialized = true;
+}
 
-    window.MinimalComponent = {
+window.MinimalComponent = {
 
 
-        // Use polymer-micro created callback to initialize the component.
-        created: function () {
+    // Use polymer-micro created callback to initialize the component.
+    created: function () {
 
-            if (this.template) {
+        if (this.template) {
 
-                if (!this.template._initialized) {
-                    shimTemplateStyles(this.template, this.is);
-                }
-
-                // Instantiate template.
-                if (this.template.getAttribute("noshadowroot") !== null) {
-                    this.root = this;
-                } else {
-                    this.root = this.createShadowRoot();
-                }
-                var clone = document.importNode(this.template.content, true);
-                this.root.appendChild(clone);
-
-                //if( this.template.getAttribute("noshadowroot") === null ){
-                // Create this.$.<id> properties.
-                createReferencesToNodesWithIds(this);
-                //}
+            if (!this.template._initialized) {
+                shimTemplateStyles(this.template, this.is);
             }
 
-            // Initialize property values from attributes.
-            // This invokes an undocumented method internal to Polymer.
-            this._takeAttributesToModel(this);
+            // Instantiate template.
+            if (this.template.getAttribute("noshadowroot") !== null) {
+                this.root = this;
+            } else {
+                this.root = this.createShadowRoot();
+            }
+            var clone = document.importNode(this.template.content, true);
+            this.root.appendChild(clone);
 
-            // Shortcut for this.root.querySelector(). 
-            // Mainly useful when not using a shadow root, 
-            // where the this.$ syntax shouldn't really be used
-            this.qs = this.root.querySelector.bind(this.root);
+            //if( this.template.getAttribute("noshadowroot") === null ){
+            // Create this.$.<id> properties.
+            createReferencesToNodesWithIds(this);
+            //}
         }
 
-    };
+        // Initialize property values from attributes.
+        // This invokes an undocumented method internal to Polymer.
+        this._takeAttributesToModel(this);
+
+        // Shortcut for this.root.querySelector(). 
+        // Mainly useful when not using a shadow root, 
+        // where the this.$ syntax shouldn't really be used
+        this.qs = this.root.querySelector.bind(this.root);
+    }
+
+};
 
 })();
