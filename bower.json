@@ -17,7 +17,7 @@
   "dependencies": {
     "polymer": "~1.2.3",
     "Sortable": "RubaXa/Sortable#~1.4.2",
-    "pnsk-structured-editor-scribe": "~0.0.5"
+    "pnsk-structured-editor-prosemirror": "~0.0.1"
   },
   "devDependencies": {
     "web-component-tester": "~3.4.0"
