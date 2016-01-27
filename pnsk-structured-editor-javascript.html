@@ -1,0 +1,56 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<template id="pnsk-structured-editor-javascript" noshadowroot>
+    <textarea rows="3" cols="30" class="scriptbox"></textarea>
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-javascript',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-javascript'),
+
+        dataType: "javascript",
+
+        getState: function () {
+            return this.root.querySelector(".scriptbox").value;
+        },
+
+        setState: function (state) {
+            this.root.querySelector(".scriptbox").value = state;
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this.updateHeight();
+        },
+
+        updateHeight: function () {
+            var textBox = this.qs("textarea");
+            if (textBox.clientHeight == textBox.scrollHeight) {
+                textBox.style.height = "auto";
+            }
+            textBox.style.height = textBox.scrollHeight + 'px'
+        },
+
+        // Element Lifecycle
+
+        created: function () {
+            this.root.querySelector(".scriptbox").addEventListener("change", this._onChange.bind(this));
+            this.root.querySelector(".scriptbox").addEventListener("keyup", this._onChange.bind(this));
+            this.root.querySelector(".scriptbox").addEventListener("paste", this._onChange.bind(this));
+            this.root.querySelector(".scriptbox").addEventListener("cut", this._onChange.bind(this));
+
+        },
+
+        attached: function () {
+            this.updateHeight();
+        }
+
+    });
+
+</script>

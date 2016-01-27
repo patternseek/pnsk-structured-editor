@@ -1,0 +1,94 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-image .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        padding: 8px;
+        display: none;
+    }
+</style>
+
+<template id="pnsk-structured-editor-image" noshadowroot>
+    <div class="preview"></div>
+        <span class="inputswrapper">
+            <label>
+                URL
+                <input class="url" type="url">
+            </label>
+            <label>
+                Title
+                <input class="title" type="text">
+            </label>
+            <label>
+                Attribution
+                <input class="attribution" type="text">
+            </label>
+        </span>
+
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-image',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-image'),
+
+        dataType: "image",
+
+        getState: function () {
+            return {
+                'url': this.qs(".url").value,
+                'title': this.qs(".title").value,
+                'attribution': this.qs(".attribution").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".url").value = state.url;
+            this.qs(".title").value = state.title;
+            this.qs(".attribution").value = state.attribution;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this._updatePreview();
+        },
+
+        _updatePreview: function () {
+            var img;
+            var plc = this.qs(".preview");
+            var src = this.qs(".url").value;
+            var title = this.qs(".title").value
+            if (img = plc.querySelector("img")) {
+                // Don't flash image changes all the time
+                if (img.src != src) {
+                    img.src = src;
+                }
+                img.title = title;
+            } else {
+                img = document.createElement("img");
+                img.src = src;
+                img.title = title;
+                img.style.maxWidth = "100%";
+                plc.appendChild(img);
+                plc.style.display = "block";
+            }
+        },
+
+        // Element Lifecycle
+        created: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("keyup", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
