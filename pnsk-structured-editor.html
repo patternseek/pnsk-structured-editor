@@ -47,7 +47,7 @@
 
     pnsk-structured-editor .addDialogue {
         visibility: hidden;
-        position: absolute;
+        position: fixed;
         left: 0px;
         top: 0px;
         width: 100%;
@@ -59,7 +59,7 @@
 
     pnsk-structured-editor .addDialogue div {
         width: 300px;
-        position: absolute;
+        position: fixed;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
@@ -204,16 +204,13 @@
         properties: {
 
             availableTypes: Array,
-            disallowedCreationTypes: Array
+            disallowedCreationTypes: Array,
+            _blocks: Array,
+            _typeHandlers: Object
 
         },
         
-        /**
-         * The blocks contained by the editor
-         */
-        _blocks: [],
 
-        _typeHandlers: {},
 
         thisDir: currentImportURL.substring(0, currentImportURL.lastIndexOf("/")),
 
@@ -332,10 +329,10 @@
 
         // Element Lifecycle
 
-        attachedCallback: function () {
+        attached: function () {
 
             // Add component form UI
-            this.querySelector(".addComponentButton").addEventListener('click', this._submitAddComponent.bind(this), false);
+            this.qs(".addComponentButton").addEventListener('click', this._submitAddComponent.bind(this), false);
             this.querySelector(".addComponent").addEventListener('click', this._showAddDialogue.bind(this), false);
             this.querySelector(".cancelAddDialogue").addEventListener('click', this._onClickCloseAddDialogue.bind(this), false);
             this.addEventListener("keydown", function (evt) {
@@ -351,6 +348,9 @@
             // Drag and drop
             this.querySelector(".sortable").addEventListener('end', this._handleDragEnd.bind(this), false);
 
+            this._blocks = [];
+            this._typeHandlers = {};
+            
             this._populateTypeHandlers();
 
             this._populateAddDialogue();
@@ -400,6 +400,9 @@
         },
 
         _populateTypeHandlers: function () {
+            if( typeof this._typeHandlers == "undefined"){
+                this._typeHandlers = {};
+            }
             for (index in this.availableTypes) {
                 if (this._typeHandlers[this.availableTypes[index].type]) {
                     throw "Can't define more than one tag to handle a given type.";

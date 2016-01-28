@@ -21,7 +21,7 @@
                 <h3 class="componentTitle"></h3>
             </div>
 
-            <div class="block-collapse">
+            <div class="block-collapse visible">
                 <div class="block-controls">
                     <div class="drag-handle"><img width="24" height="24" title="Drag this component" alt=""
                                                   src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAJI0lEQVRIDQEYCef2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADr6+sM+fn5WPv7+5v7+/vF+vr6y/r6+sv7+/vF+/v7nfn5+Vjt7e0MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPDw8Az6+vqH+/v7z/r6+oH29vY45OTkDAAAAAAAAAAA4uLiDPb29jb6+vp++/v7z/r6+onw8PAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPf39zz7+/vP+fn5ZOjo6AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLi4gT5+fli+/v7z/f39z4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPb29lL7+/vF8vLyHAAAAAAAAAAAAAAAAAAAAAAAAAAA+vr6Wvr6+nAAAAAAAAAAAAAAAAAAAAAAAAAAAPPz8xr7+/vF9/f3VgAAAAAAAAAAAAAAAAAAAAAAAAAAAPf39z77+/vF8PDwDgAAAAAAAAAAAAAAAAAAAAAAAAAA9/f3KP7+/vP+/v75+Pj4NgAAAAAAAAAAAAAAAAAAAAAAAAAA8fHxDPv7+8P4+PhAAAAAAAAAAAAAAAAAAPDw8BD7+/vR8/PzGgAAAAAAAAAAAAAAAAAAAAAAAAAA8PDwCv39/dH+/v7//v7+//39/d/09PQSAAAAAAAAAAAAAAAAAAAAAAAAAADz8/MY+/v70e/v7xIAAAAAAAAAAAD7+/uN+Pj4YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/Jv//////////////////////Pz8rwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPj4+Fr7+/uRAAAAAADt7e0Q+/v7zeDg4AIAAAAAAAAAAAAAAAAAAAAAAAAAAPX19Rb+/v5+/v7+j/7+/v/+/v7//v7+j/7+/n739/cgAAAAAAAAAAAAAAAAAAAAAAAAAADd3d0C+/v7y+7u7hIA+Pj4Yvr6+nYAAAAAAAAAAAAAAAAAAAAAAAAAAPb29hoAAAAAAAAAAP///yD//////////////yAAAAAAAAAAAPb29hoAAAAAAAAAAAAAAAAAAAAAAAAAAPr6+nL5+flmAPz8/KXy8vIuAAAAAAAAAAAAAAAA8vLyDPz8/KX+/v5+AAAAAAAAAAD///8g//////////////8gAAAAAAAAAAD+/v5+/Pz8pfLy8gwAAAAAAAAAAAAAAADx8fEq/Pz8qQD6+vrL4+PjBAAAAAAAAAAA+Pj4Lv39/df//////v7+j////yD///8g/v7+PP7+/v///////v7+PP///yD///8g/v7+j/7+/v/9/f3Z+Pj4LgAAAAAAAAAA4uLiBPr6+s0A+fn5zwAAAAAAAAAA+vr6ZP7+/vX///////////7+/v///////v7+//7+/v/////////////////+/v7///////7+/v///////v7+//7+/vf6+vpmAAAAAAAAAAD8/PzHAPr6+s0AAAAAAAAAAPr6+mb+/v73///////////+/v7////////////////////////////////////////////+/v7////////////+/v73+vr6aAAAAAAAAAAA/Pz8xwD6+vrN29vbBAAAAAAAAAAA+Pj4MP39/dn/////////j////yD///8g/v7+PP///////////v7+PP///yD///8g////j//////9/f3Z+Pj4MAAAAAAAAAAA19fXAvr6+s8A/Pz8rfHx8SYAAAAAAAAAAAAAAADy8vIO/Pz8p/7+/n4AAAAAAAAAAP///yD//////////////yAAAAAAAAAAAP7+/n78/Pyn8vLyDgAAAAAAAAAAAAAAAPHx8SL7+/uxAPr6+mr6+vpsAAAAAAAAAAAAAAAAAAAAAAAAAAD39/ccAAAAAAAAAAD///8g//////////////8gAAAAAAAAAAD39/ccAAAAAAAAAAAAAAAAAAAAAAAAAAD5+flo+vr6bgDv7+8Y+/v7xwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPX19Rb+/v5+////j/7+/v/+/v7/////j////3739/ciAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+/v7w/Hx8RoAAAAAAPv7+5/39/dMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/Pz8nf7+/v/+/v7//v7+//7+/v/8/Pyx2dnZAgAAAAAAAAAAAAAAAAAAAAAAAAAA9/f3SPv7+6EAAAAAAAAAAADy8vIa+/v7z+/v7xAAAAAAAAAAAAAAAAAAAAAAAAAAAPDw8Ar9/f3T/v7+//7+/v/9/f3f9PT0EgAAAAAAAAAAAAAAAAAAAAAAAAAA7+/vDvv7+8/z8/McAAAAAAAAAAAAAAAAAPj4+FL7+/u17+/vBgAAAAAAAAAAAAAAAAAAAAAAAAAA9/f3KP7+/vP+/v75+Pj4OAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoBvv7+7P4+PhWAAAAAAAAAAAAAAAAAAAAAAAAAAAA+fn5bPv7+7Xw8PAOAAAAAAAAAAAAAAAAAAAAAAAAAAD6+vpc+vr6cgAAAAAAAAAAAAAAAAAAAAAAAAAA7+/vDPv7+7H6+vpwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4+PhW+/v7z/f390YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9/f3Qvv7+834+PhYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPPz8x77+/ul+/v7wfn5+WDt7e0aAAAAAAAAAAAAAAAAAAAAAO7u7hj5+fle+/v7v/v7+6fz8/MgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPLy8h76+vp4+/v7ufr6+s34+PjT+Pj40/r6+s37+/u7+vr6ePLy8iAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHu7ss2UYQx0AAAAASUVORK5CYII="/>
@@ -49,15 +49,13 @@
         template: currentImport.querySelector('#pnsk-structured-editor-block-wrapper'),
 
         properties: {
-            setIndex: Number
+            setIndex: Number,
+            _editor: Object,
+            /**
+             * The block wrapped by this... wrapper
+             */
+            _wrapped: Object
         },
-
-        _editor: null,
-
-        /**
-         * The block wrapped by this... wrapper
-         */
-        _wrapped: null,
 
         wrap: function (block, title) {
             if ((typeof block.getState !== "function" ) || ( typeof block.setState !== "function" ) || ( typeof block.dataType !== "string" )) {
@@ -94,16 +92,20 @@
             }
         },
 
-        _minimise: function () {
+        _minimise: function ( event ) {
             this.qs(".minimise").style.display = "none";
             this.qs(".maximise").style.display = "block";
             this.qs(".block-collapse").classList.toggle("visible");
+            event.preventDefault();
+            event.stopPropagation();
         },
 
-        _maximise: function () {
+        _maximise: function ( event ) {
             this.qs(".minimise").style.display = "block";
             this.qs(".maximise").style.display = "none";
             this.qs(".block-collapse").classList.toggle("visible");
+            event.preventDefault();
+            event.stopPropagation();
         },
         
         // Element Lifecycle
@@ -113,6 +115,7 @@
             this.qs(".add-component").addEventListener('click', this._showAddDialogue.bind(this), false);
             this.qs(".minimise").addEventListener('click', this._minimise.bind(this), false);
             this.qs(".maximise").addEventListener('click', this._maximise.bind(this), false);
+            this._wrapped = null;
         },
 
     });
