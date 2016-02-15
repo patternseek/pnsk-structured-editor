@@ -180,7 +180,6 @@
         margin: 0px 0px 3px;
     }
 
-
 </style>
 
 <template id="pnsk-structured-editor" noshadowroot>
@@ -197,7 +196,7 @@
             </form>
         </div>
     </div>
-    <a class="addComponent" href="#"><img width="20" height="20" title="Add a component at the top" alt=""
+    <a class="addComponent hideForTextOnly" href="#"><img width="20" height="20" title="Add a component at the top" alt=""
                                           src="data:image/png;base64,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"/></a>
 
     <div class="sortable"></div>
@@ -218,6 +217,7 @@
 
             availableTypes: Array,
             disallowedCreationTypes: Array,
+            textOnly: Boolean,
             _blocks: Array,
             _typeHandlers: Object
 
@@ -270,9 +270,6 @@
             // wrap() enforces type of newBlock
             wrapper.setEditor(this);
             wrapper.wrap(newBlock, lable);
-            if (typeof data !== "undefined") {
-                wrapper.setState(data);
-            }
             wrapper.classList.add( "sortable" );
             
             // Add to DOM
@@ -281,6 +278,13 @@
             // Add to blocklist
             this._blocks.splice( atIndex, 0, wrapper );
             this._updateBlockIds();
+            
+            // Moving this to the end so that the block is in place and if it need to immediately transform its
+            // content (specifically ProseMirror converting html -> markdown) then the block is in _blocks and can
+            // be updated via _handleStateChanged().
+            if (typeof data !== "undefined") {
+                wrapper.setState(data);
+            }
         },
 
         deleteBlock: function (deleteIndex) {
@@ -314,10 +318,6 @@
             
             // Copy DOM element
             var moveBlock = this._getBlock(fromIndex);
-            ///moveBlock.id = "moving-block";
-            ///this._domRemove( moveBlock );
-            // This is OK as the block with toIndex will still hold its old index
-            ///this._domSetAtIndex( moveBlock, toIndex );
             
             // 'Copy' to new index in blocks list
             var addAtIndex = toIndex;
@@ -341,32 +341,50 @@
         },
 
         // Element Lifecycle
-
         attached: function () {
-
-            // Add component form UI
-            this.qs(".addComponentButton").addEventListener('click', this._submitAddComponent.bind(this), false);
-            this.querySelector(".addComponent").addEventListener('click', this._showAddDialogue.bind(this), false);
-            this.querySelector(".cancelAddDialogue").addEventListener('click', this._onClickCloseAddDialogue.bind(this), false);
-            this.addEventListener("keydown", function (evt) {
-                if (this.qs(".addDialogue").style.visibility == "hidden") {
-                    return;
-                }
-                evt = evt || window.event;
-                if (evt.keyCode == 27) {
-                    this.toggleAddDialogue(0);
-                }
-            }.bind(this));
-
-            // Drag and drop
-            this.querySelector(".sortable").addEventListener('end', this._handleDragEnd.bind(this), false);
 
             this._blocks = [];
             this._typeHandlers = {};
             
-            this._populateTypeHandlers();
+            // Don't seem to be able to set default value on props with Polymer micro:
+            if( typeof this.textOnly == "undefined"){
+                this.textOnly = false;
+            }
+            
+            if( this.textOnly == false ){
+                // Add component form UI
+                this.qs(".addComponentButton").addEventListener('click', this._submitAddComponent.bind(this), false);
+                this.querySelector(".addComponent").addEventListener('click', this._showAddDialogue.bind(this), false);
+                this.querySelector(".cancelAddDialogue").addEventListener('click', this._onClickCloseAddDialogue.bind(this), false);
+                this.addEventListener("keydown", function (evt) {
+                    if (this.qs(".addDialogue").style.visibility == "hidden") {
+                        return;
+                    }
+                    evt = evt || window.event;
+                    if (evt.keyCode == 27) {
+                        this.toggleAddDialogue(0);
+                    }
+                }.bind(this));
 
-            this._populateAddDialogue();
+                // Drag and drop
+                this.querySelector(".sortable").addEventListener('end', this._handleDragEnd.bind(this), false);
+
+                this._populateAddDialogue();
+
+            }else{
+
+                // Hide buttons etc
+                // This is repeated in block-wrapper
+                var toHide = this.querySelectorAll(".hideForTextOnly");
+                [].forEach.call( toHide, function(el) {
+                    el.style.display = "none";
+                });
+                
+                // Set up the single available type.
+                this.availableTypes = [];
+                this.availableTypes.push( {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Text"} );
+            }
+            this._populateTypeHandlers();
 
             var input;
             try {
@@ -375,18 +393,24 @@
                 return;
             }
 
-            for (var index = 0; index < input.length; index++) {
-                var typeInfo;
-                if (this._typeHandlers[input[index].type]) {
-                    typeInfo = this._typeHandlers[input[index].type];
-                } else {
-                    typeInfo = this._typeHandlers["legacy-html"];
+            if( this.textOnly == true ){
+                if( ( input.length > 1 ) || ( input[0]['type'] !== "rich-text" ) ){
+                    alert( "Sorry but the rich text editor has been passed invalid data and cannot continue. Please contact an administrator." );
+                    return;
                 }
-                this.addBlock(typeInfo, index, input[index].data);
+                this.addBlock(this._typeHandlers["rich-text"], 0, input[0].data);
+            }else{
+                for (var index = 0; index < input.length; index++) {
+                    var typeInfo;
+                    if (this._typeHandlers[input[index].type]) {
+                        typeInfo = this._typeHandlers[input[index].type];
+                    } else {
+                        typeInfo = this._typeHandlers["legacy-html"];
+                    }
+                    this.addBlock(typeInfo, index, input[index].data);
+                }
+                this._startSortable();
             }
-
-            this._startSortable();
-
 
         },
 
