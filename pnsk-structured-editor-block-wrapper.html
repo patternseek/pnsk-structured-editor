@@ -84,8 +84,10 @@
             this._editor = editor;
         },
 
-        _showAddDialogue: function () {
+        _showAddDialogue: function ( event ) {
             this._editor.toggleAddDialogue(this.setIndex + 1);
+            event.preventDefault();
+            event.stopPropagation();
         },
 
         _showDeleteDialogue: function () {
