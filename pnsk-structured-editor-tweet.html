@@ -1,0 +1,108 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-tweet .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        padding: 8px;
+        display: none;
+        width: 100%;
+    }
+</style>
+
+<template id="pnsk-structured-editor-tweet" noshadowroot>
+    <div class="preview"></div>
+        <span class="inputswrapper">
+            <label>
+                URL
+                <input class="url" type="url">
+            </label>
+        </span>
+
+    <content></content>
+</template>
+
+
+<script>
+    window.twttr = (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0],
+                t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function (f) {
+            t._e.push(f);
+        };
+
+        return t;
+    }(document, "script", "twitter-wjs"));
+    
+    Polymer({
+        is: 'pnsk-structured-editor-tweet',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-tweet'),
+
+        properties: {
+            oembedProxyUrl: String
+        },
+
+        dataType: "tweet",
+
+        getState: function () {
+            return {
+                'url': this.qs(".url").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".url").value = state.url;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this._updatePreview();
+        },
+
+        _updatePreview: function () {
+
+            window.setTimeout(function () {
+                var req = new XMLHttpRequest();
+                var plc = this.qs(".preview");
+
+                req.onreadystatechange = function () {
+                    if (req.readyState == XMLHttpRequest.DONE) {
+                        if (req.status == 200) {
+                            plc.innerHTML = JSON.parse(req.responseText).html;
+                            plc.style.display = "block";
+                            twttr.widgets.load(plc);
+                        }
+                        else {
+                            plc.style.display = "none";
+                        }
+                    }
+                }.bind(this);
+                req.open("GET", this.oembedProxyUrl + encodeURIComponent(this.qs(".url").value), true);
+                req.send();
+                plc.style.display = "none";
+
+            }.bind(this), 40);
+
+        },
+
+        // Element Lifecycle
+        created: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
