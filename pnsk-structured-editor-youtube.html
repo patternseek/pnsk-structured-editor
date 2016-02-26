@@ -1,0 +1,136 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-youtube .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        display: none;
+        width: 100%;
+
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+
+    pnsk-structured-editor-youtube .preview iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<template id="pnsk-structured-editor-youtube" noshadowroot>
+    <div class="preview"></div>
+        <span class="inputswrapper">
+            <input class="videoID" type="hidden">
+            <label>
+                URL
+                <input class="url" type="url">
+            </label>
+        </span>
+
+    <content></content>
+</template>
+
+
+<script>
+
+    Polymer({
+        is: 'pnsk-structured-editor-youtube',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-youtube'),
+
+        properties: {
+            oembedProxyUrl: String
+        },
+
+        dataType: "youtube",
+
+        getState: function () {
+            return {
+                'id': this.qs(".videoID").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".videoID").value = state.id;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            window.setTimeout(function () {
+                        this.qs(".videoID").value = this._getVideoID(this.qs(".url").value);
+                        var event = new Event('pnsk-component-stateChanged');
+                        this.dispatchEvent(event);
+                        this._updatePreview();
+                    }.bind(this),
+                    40);
+        },
+
+        _getVideoID: function (url) {
+            var ytParse = document.createElement('a');
+            ytParse.href = url;
+            var tmp = ytParse.search.split("&");
+
+            var videoID;
+            for (var i in tmp) {
+                if (tmp[i].substring(0, 2) === "v=") {
+                    videoID = tmp[i].substring(2);
+                }
+                if (tmp[i].substring(0, 3) === "?v=") {
+                    videoID = tmp[i].substring(3);
+                }
+            }
+            return videoID;
+        },
+
+        _updatePreview: function () {
+
+            var url = this.qs(".url").value;
+            var preview = this.qs(".preview");
+            var iframe = preview.querySelector("iframe");
+            if (iframe !== null) {
+                preview.removeChild(iframe);
+            }
+            if (url == "") {
+                preview.style.display = "none";
+                return;
+            }
+
+            var videoID = this.qs(".videoID").value;
+
+            var thisParse = document.createElement('a');
+            thisParse.href = window.location.href;
+            var origin = '';
+            if (thisParse.hostname != "localhost") {
+                origin = "&origin=" + thisParse.hostname;
+            }
+
+            iframe = document.createElement("iframe");
+            //iframe.id = "ytplayer"
+            iframe.type = "text/html";
+            iframe.width = "100%";
+            iframe.frameBorder = 0;
+
+            iframe.src = "//www.youtube.com/embed/" + videoID + origin;
+            preview.appendChild(iframe);
+            preview.style.display = "block";
+            //<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&origin=http://example.com" frameborder="0"/>                
+
+
+        },
+
+        // Element Lifecycle
+        created: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
