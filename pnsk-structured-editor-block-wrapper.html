@@ -90,10 +90,12 @@
             event.stopPropagation();
         },
 
-        _showDeleteDialogue: function () {
+        _showDeleteDialogue: function (event) {
             if (window.confirm("Are you sure you want to permanently delete this? The content will be lost.")) {
                 this._editor.deleteBlock(this.setIndex);
             }
+            event.preventDefault();
+            event.stopPropagation();
         },
 
         _minimise: function ( event ) {
