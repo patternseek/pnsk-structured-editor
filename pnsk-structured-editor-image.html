@@ -12,6 +12,8 @@
 <template id="pnsk-structured-editor-image" noshadowroot>
     <div class="preview"></div>
         <span class="inputswrapper">
+            <input class="width" type="hidden">
+            <input class="height" type="hidden">
             <label>
                 URL
                 <input class="url" type="url">
@@ -19,6 +21,10 @@
             <label>
                 Title
                 <input class="title" type="text">
+            </label>
+            <label>
+                Alt-text
+                <input class="alt" type="text">
             </label>
             <label>
                 Attribution
@@ -43,14 +49,20 @@
             return {
                 'url': this.qs(".url").value,
                 'title': this.qs(".title").value,
-                'attribution': this.qs(".attribution").value
+                'alt': this.qs(".alt").value,
+                'attribution': this.qs(".attribution").value,
+                'width': this.qs(".width").value,
+                'height': this.qs(".height").value,
             };
         },
 
         setState: function (state) {
             this.qs(".url").value = state.url;
             this.qs(".title").value = state.title;
+            this.qs(".alt").value = state.alt;
             this.qs(".attribution").value = state.attribution;
+            this.qs(".width").value = state.width;
+            this.qs(".height").value = state.height;
             this._updatePreview();
         },
 
@@ -65,20 +77,31 @@
             var plc = this.qs(".preview");
             var src = this.qs(".url").value;
             var title = this.qs(".title").value
+            var alt = this.qs(".alt").value
             if (img = plc.querySelector("img")) {
                 // Don't flash image changes all the time
                 if (img.src != src) {
                     img.src = src;
                 }
                 img.title = title;
+                img.alt = alt;
             } else {
                 img = document.createElement("img");
                 img.src = src;
                 img.title = title;
+                img.alt = alt;
                 img.style.maxWidth = "100%";
                 plc.appendChild(img);
                 plc.style.display = "block";
+
             }
+            img.addEventListener("load",
+                    function () {
+                        this.qs(".width").value = img.naturalWidth;
+                        this.qs(".height").value = img.naturalHeight;
+                    }.bind(this)
+            );
+
         },
 
         // Element Lifecycle
