@@ -8,6 +8,7 @@
     <script src="./minimalComponent.js"></script>
     <link rel="import" href="../../pnsk-structured-editor-prosemirror/pnsk-structured-editor-prosemirror.html">
     <link rel="import" href="../pnsk-structured-editor-blockquote.html">
+    <link rel="import" href="../pnsk-structured-editor-anchor.html">
     <link rel="import" href="../pnsk-structured-editor-javascript.html">
     <link rel="import" href="../pnsk-structured-editor-legacy-html.html">
     <link rel="import" href="../pnsk-structured-editor-image.html">
@@ -23,8 +24,9 @@
         <pnsk-structured-editor
                 available-types='[
                     {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Text"},
-                    {"type": "blockquote", "element":"pnsk-structured-editor-blockquote", "lable":"Blockquote"},
                     {"type": "image", "element":"pnsk-structured-editor-image", "lable":"External image"},
+                    {"type": "blockquote", "element":"pnsk-structured-editor-blockquote", "lable":"Blockquote"},
+                    {"type": "anchor", "element":"pnsk-structured-editor-anchor", "lable":"Anchor"},
                     {"type": "javascript", "element":"pnsk-structured-editor-javascript", "lable":"Javascript"},
                     {"type": "legacy-html", "element":"pnsk-structured-editor-legacy-html", "lable":"Legacy HTML"},
                     {"type": "tweet", "element":"pnsk-structured-editor-tweet", "lable":"Tweet", 
