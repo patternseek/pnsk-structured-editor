@@ -52,12 +52,14 @@
 
         getState: function () {
             return {
-                'id': this.qs(".videoID").value
+                'id': this.qs(".videoID").value,
+                'url': this.qs(".url").value
             };
         },
 
         setState: function (state) {
             this.qs(".videoID").value = state.id;
+            this.qs(".url").value = state.url;
             this._updatePreview();
         },
 
