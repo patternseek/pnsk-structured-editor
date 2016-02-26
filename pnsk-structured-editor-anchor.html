@@ -1,0 +1,46 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<template id="pnsk-structured-editor-anchor" noshadowroot>
+    <label>
+        Fragment ID
+        <input type="text" class="id">
+    </label>
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-anchor',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-anchor'),
+
+        dataType: "anchor",
+
+        getState: function () {
+            return this.root.querySelector(".id").value;
+        },
+
+        setState: function (state) {
+            this.root.querySelector(".id").value = state;
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+        },
+
+        // Element Lifecycle
+
+        created: function () {
+            this.root.querySelector(".id").addEventListener("change", this._onChange.bind(this));
+            this.root.querySelector(".id").addEventListener("keyup", this._onChange.bind(this));
+            this.root.querySelector(".id").addEventListener("paste", this._onChange.bind(this));
+            this.root.querySelector(".id").addEventListener("cut", this._onChange.bind(this));
+
+        },
+
+    });
+
+</script>
