@@ -105,20 +105,13 @@
 
             var videoID = this.qs(".videoID").value;
 
-            var thisParse = document.createElement('a');
-            thisParse.href = window.location.href;
-            var origin = '';
-            if (thisParse.hostname != "localhost") {
-                origin = "&origin=" + thisParse.hostname;
-            }
-
             iframe = document.createElement("iframe");
             //iframe.id = "ytplayer"
             iframe.type = "text/html";
             iframe.width = "100%";
             iframe.frameBorder = 0;
 
-            iframe.src = "//www.youtube.com/embed/" + videoID + origin;
+            iframe.src = "//www.youtube.com/embed/" + videoID;
             preview.appendChild(iframe);
             preview.style.display = "block";
             //<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&origin=http://example.com" frameborder="0"/>                
