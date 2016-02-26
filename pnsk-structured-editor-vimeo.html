@@ -1,0 +1,122 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-vimeo .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        display: none;
+        width: 100%;
+
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+
+    pnsk-structured-editor-vimeo .preview iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<template id="pnsk-structured-editor-vimeo" noshadowroot>
+    <div class="preview"></div>
+        <span class="inputswrapper">
+            <input class="videoID" type="hidden">
+            <label>
+                URL
+                <input class="url" type="url">
+            </label>
+        </span>
+
+    <content></content>
+</template>
+
+
+<script>
+
+    Polymer({
+        is: 'pnsk-structured-editor-vimeo',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-vimeo'),
+
+        properties: {
+            oembedProxyUrl: String
+        },
+
+        dataType: "vimeo",
+
+        getState: function () {
+            return {
+                'id': this.qs(".videoID").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".videoID").value = state.id;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            window.setTimeout(function () {
+                        this.qs(".videoID").value = this._getVideoID(this.qs(".url").value);
+                        var event = new Event('pnsk-component-stateChanged');
+                        this.dispatchEvent(event);
+                        this._updatePreview();
+                    }.bind(this),
+                    40);
+        },
+
+        _getVideoID: function (url) {
+            if (url == "") {
+                return '';
+            }
+            var vimParse = document.createElement('a');
+            vimParse.href = url;
+            var tmp = vimParse.pathname.split("/");
+            var videoID = tmp[tmp.length - 1];
+            return videoID;
+        },
+
+        _updatePreview: function () {
+            var url = this.qs(".url").value;
+            var preview = this.qs(".preview");
+            var iframe = preview.querySelector("iframe");
+            if (iframe !== null) {
+                preview.removeChild(iframe);
+            }
+            if (url == "") {
+                preview.style.display = "none";
+                return;
+            }
+
+            var videoID = this.qs(".videoID").value;
+
+            iframe = document.createElement("iframe");
+            //iframe.id = "ytplayer"
+            iframe.width = "100%";
+            iframe.frameBorder = 0;
+            iframe.webkitallowfullscreen = true;
+            iframe.mozallowfullscreen = true;
+            iframe.allowfullscreen = true;
+
+            iframe.src = "https://player.vimeo.com/video/" + videoID;
+            preview.appendChild(iframe);
+            preview.style.display = "block";
+            //<iframe src="https://player.vimeo.com/video/153339497?title=0&byline=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>                
+        },
+
+        // Element Lifecycle
+        created: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
