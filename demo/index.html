@@ -27,7 +27,11 @@
                 available-types='[
                     {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Text"},
                     {"type": "image", "element":"pnsk-structured-editor-image", "lable":"External image"},
-                    {"type": "blockquote", "element":"pnsk-structured-editor-blockquote", "lable":"Blockquote"},
+                    {"type": "blockquote", "element":"pnsk-structured-editor-blockquote", "lable":"Blockquote",
+                        "config":{
+                            "formats":{"right":"Float right","left":"Float left"}
+                        }
+                    },
                     {"type": "anchor", "element":"pnsk-structured-editor-anchor", "lable":"Anchor"},
                     {"type": "javascript", "element":"pnsk-structured-editor-javascript", "lable":"Javascript"},
                     {"type": "legacy-html", "element":"pnsk-structured-editor-legacy-html", "lable":"Legacy HTML"},

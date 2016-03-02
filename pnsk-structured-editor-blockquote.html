@@ -11,6 +11,12 @@
                 Cite
                 <input class="cite" type="text">
             </label>
+            <label>
+                Format preset
+                <select class="format">
+
+                </select>
+            </label>
         </span>
     <content></content>
 </template>
@@ -21,6 +27,12 @@
         is: 'pnsk-structured-editor-blockquote',
         behaviors: [MinimalComponent],
 
+        properties: {
+            formats: Object
+        },
+
+        _format: null,
+
         template: currentImport.querySelector('#pnsk-structured-editor-blockquote'),
 
         dataType: "blockquote",
@@ -28,13 +40,16 @@
         getState: function () {
             return {
                 quote: this.qs(".quote").getState().markdown,
-                cite: this.qs(".cite").value
+                cite: this.qs(".cite").value,
+                format: this.qs(".format").value
             }
         },
 
         setState: function (state) {
             this.qs(".cite").value = state.cite;
             this.qs(".quote").setState({'markdown': state.quote});
+            this._format = state.format;
+            this.qs(".format").value = this._format;
         },
 
         _onChange: function () {
@@ -50,6 +65,18 @@
             this.root.querySelector(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
             this.root.querySelector(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
 
+        },
+
+        attached: function () {
+            if (typeof this.formats === "object") {
+                for (var key in this.formats) {
+                    var op = document.createElement("option");
+                    op.text = this.formats[key];
+                    op.value = key;
+                    this.qs(".format").add(op);
+                }
+                this.qs(".format").value = this._format;
+            }
         }
 
     });
