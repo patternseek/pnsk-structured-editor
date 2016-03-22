@@ -28,6 +28,10 @@
         width: auto !important;
     }
 
+    pnsk-structured-editor label > * {
+        margin-top: 4px;
+    }
+
     pnsk-structured-editor label input,
     pnsk-structured-editor label select,
     pnsk-structured-editor label textarea {
@@ -341,7 +345,7 @@
         },
 
         // Element Lifecycle
-        attached: function () {
+        ready: function () {
 
             this._blocks = [];
             this._typeHandlers = {};
@@ -372,20 +376,17 @@
                 this._populateAddDialogue();
 
             }else{
-
                 // Hide buttons etc
                 // This is repeated in block-wrapper
                 var toHide = this.querySelectorAll(".hideForTextOnly");
                 [].forEach.call( toHide, function(el) {
                     el.style.display = "none";
                 });
-                
                 // Set up the single available type.
                 this.availableTypes = [];
                 this.availableTypes.push( {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Text"} );
             }
             this._populateTypeHandlers();
-
             var input;
             try {
                 input = JSON.parse(this.querySelector("input").value);
