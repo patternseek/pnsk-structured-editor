@@ -28,10 +28,9 @@
         behaviors: [MinimalComponent],
 
         properties: {
-            formats: Object
+            formats: Object,
+            _format: Object
         },
-
-        _format: null,
 
         template: currentImport.querySelector('#pnsk-structured-editor-blockquote'),
 
@@ -41,15 +40,20 @@
             return {
                 quote: this.qs(".quote").getState().markdown,
                 cite: this.qs(".cite").value,
-                format: this.qs(".format").value
+                // This will be called before the select is ready in which case we need to fetch from the variable
+                format: this.qs(".format").value == "" ? this._format : this.qs(".format").value
             }
         },
 
         setState: function (state) {
             this.qs(".cite").value = state.cite;
             this.qs(".quote").setState({'markdown': state.quote});
+            // Need to set both because this is called before the
+            // select is ready (in which case the select building code
+            // will populate it) and after, in which case it needs
+            // to be set here
+            this.qs(".format").value = state.format;
             this._format = state.format;
-            this.qs(".format").value = this._format;
         },
 
         _onChange: function () {
@@ -67,6 +71,11 @@
 
         },
 
+        /**
+         * This function has an issue which is that if it is 'attached' then it's
+         * called too late for getState() and if it's 'ready' then this._format
+         * hasn't yet been set in setState()
+         */
         attached: function () {
             if (typeof this.formats === "object") {
                 for (var key in this.formats) {
