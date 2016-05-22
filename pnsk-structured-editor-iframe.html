@@ -68,6 +68,9 @@
                 iframe = document.createElement("iframe");
                 iframe.src = src;
                 iframe.style.width = "100%";
+                iframe.frameBorder = 0;
+                iframe.marginWidth = 0;
+                iframe.marginHeight = 0;
                 plc.appendChild(iframe);
                 plc.style.display = "block";
             }
