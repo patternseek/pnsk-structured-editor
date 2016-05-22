@@ -1,0 +1,87 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-iframe .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        padding: 8px;
+        display: none;
+    }
+</style>
+
+<template id="pnsk-structured-editor-iframe" noshadowroot>
+    <div class="preview"></div>
+        <span class="inputswrapper">
+            <label>
+                URL
+                <input class="url" type="url">
+            </label>
+            <label>
+                Height
+                <input class="height" type="text">
+            </label>
+        </span>
+
+    <content></content>
+</template>
+
+
+<script>
+    Polymer({
+        is: 'pnsk-structured-editor-iframe',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-iframe'),
+
+        dataType: "iframe",
+
+        getState: function () {
+            return {
+                'url': this.qs(".url").value,
+                'height': this.qs(".height").value,
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".url").value = state.url;
+            this.qs(".height").value = state.height;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this._updatePreview();
+        },
+
+        _updatePreview: function () {
+            var iframe;
+            var plc = this.qs(".preview");
+            var src = this.qs(".url").value;
+            var height = this.qs(".height").value
+            if (iframe = plc.querySelector("iframe")) {
+                // Don't flash iframe changes all the time
+                if (iframe.src != src) {
+                    iframe.src = src;
+                }
+            } else {
+                iframe = document.createElement("iframe");
+                iframe.src = src;
+                iframe.style.width = "100%";
+                plc.appendChild(iframe);
+                plc.style.display = "block";
+            }
+            iframe.style.height = height + "px";
+        },
+
+        // Element Lifecycle
+        created: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("keyup", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
