@@ -344,8 +344,8 @@
 
         },
 
-        // Element Lifecycle
-        ready: function () {
+        // This can't be a Polymer callback because this component includes Polymer? Seems to be the case.
+        attachedCallback: function () {
 
             this._blocks = [];
             this._typeHandlers = {};

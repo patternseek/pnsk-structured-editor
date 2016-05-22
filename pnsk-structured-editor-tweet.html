@@ -97,7 +97,7 @@
         },
 
         // Element Lifecycle
-        created: function () {
+        attachedCallback: function () {
             this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
             this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
             this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));

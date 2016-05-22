@@ -12,6 +12,7 @@
     <link rel="import" href="../pnsk-structured-editor-javascript.html">
     <link rel="import" href="../pnsk-structured-editor-legacy-html.html">
     <link rel="import" href="../pnsk-structured-editor-image.html">
+    <link rel="import" href="../pnsk-structured-editor-iframe.html">
     <link rel="import" href="../pnsk-structured-editor-tweet.html">
     <link rel="import" href="../pnsk-structured-editor-youtube.html">
     <link rel="import" href="../pnsk-structured-editor-vimeo.html">
@@ -40,12 +41,15 @@
                     {"type": "vimeo", "element":"pnsk-structured-editor-vimeo", "lable":"Vimeo video"}, 
                     {"type": "soundcloud", "element":"pnsk-structured-editor-soundcloud", "lable":"Soundcloud track"}, 
                     {"type": "tweet", "element":"pnsk-structured-editor-tweet", "lable":"Tweet", 
-                        "config":{"oembedProxyUrl":"http://localhost/journal/listen/?cmd=OembedProxy&type=tweet&url="} 
-                    }
+                        "config":{"oembedProxyUrl":"http://localhost:8080/journal/listen/?cmd=OembedProxy&type=tweet&url="} 
+                    },
+                    {"type": "iframe", "element":"pnsk-structured-editor-iframe", "lable":"Iframe (Last resort!)"}
+
                 ]'
                 disallowed-creation-types='["legacy-html"]'
         >
-            <input type="text" name="editor-output" class="editorstate" value=''>
+            <input type="text" name="editor-output" class="editorstate"
+                   value='[{"type":"blockquote","data":{"quote":"Sometyhing","cite":"ciiite","format":"left"}}]'>
         </pnsk-structured-editor>
 
         <br>
