@@ -20,6 +20,13 @@
             URL
             <input class="url" type="url">
         </label>
+        <label>
+            Type
+            <select name="type" class="type">
+                <option value="post" selected>Normal post</option>
+                <option value="video">Video post</option>
+            </select>
+        </label>
     </span>
 
     <content></content>
@@ -36,19 +43,22 @@
 
         properties: {
             oembedProxyUrl: String,
-            _currentPreviewURL: String
+            _currentPreviewURL: String,
+            _currentPreviewType: String
         },
 
         dataType: "facebook-post",
 
         getState: function () {
             return {
-                'url': this.qs(".url").value
+                'url': this.qs(".url").value,
+                'type': this.qs(".type").value
             };
         },
 
         setState: function (state) {
             this.qs(".url").value = state.url;
+            this.qs(".type").value = state.type;
             this._updatePreview();
         },
 
@@ -64,9 +74,10 @@
             window.setTimeout(function () {
                 var plc = this.qs(".preview");
                 var url = this.qs(".url").value;
-                var postDiv = this.qs(".fb-post");
+                var type = this.qs(".type").value;
+                var postDiv = this.qs(".embed");
 
-                if (this._currentPreviewURL == url) {
+                if (this._currentPreviewURL == url && this._currentPreviewType == type) {
                     return;
                 }
 
@@ -77,13 +88,21 @@
                 if (url == "") {
                     plc.style.display = "none";
                     this._currentPreviewURL = '';
+                    this._currentPreviewType = 'post'
                     return;
                 }
 
                 postDiv = document.createElement("div");
                 postDiv.dataset.width = "500";
                 postDiv.dataset.href = url;
-                postDiv.classList.add("fb-post");
+
+                if (type == "video") {
+                    postDiv.classList.add("fb-video");
+                } else {
+                    postDiv.classList.add("fb-post");
+                }
+                postDiv.classList.add("embed");
+                
                 postDiv.dataset.href = url;
                 plc.appendChild(postDiv);
                 FB.XFBML.parse(plc, function () {
@@ -91,6 +110,7 @@
                 });
 
                 this._currentPreviewURL = url;
+                this._currentPreviewType = type;
 
             }.bind(this), 40);
 
