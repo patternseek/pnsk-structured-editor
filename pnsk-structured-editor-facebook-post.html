@@ -1,0 +1,109 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-facebook-post .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        padding: 8px;
+        display: none;
+        width: 100%;
+    }
+</style>
+
+<template id="pnsk-structured-editor-facebook-post" noshadowroot>
+
+    <div class="preview">
+
+    </div>
+    <span class="inputswrapper">
+        <label>
+            URL
+            <input class="url" type="url">
+        </label>
+    </span>
+
+    <content></content>
+</template>
+
+
+<script>
+
+    Polymer({
+        is: 'pnsk-structured-editor-facebook-post',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-facebook-post'),
+
+        properties: {
+            oembedProxyUrl: String,
+            _currentPreviewURL: String
+        },
+
+        dataType: "facebook-post",
+
+        getState: function () {
+            return {
+                'url': this.qs(".url").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".url").value = state.url;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this._updatePreview();
+        },
+
+        _updatePreview: function () {
+
+            // Paste fires before URL is updated.
+            window.setTimeout(function () {
+                var plc = this.qs(".preview");
+                var url = this.qs(".url").value;
+                var postDiv = this.qs(".fb-post");
+
+                if (this._currentPreviewURL == url) {
+                    return;
+                }
+
+                if (postDiv != null) {
+                    plc.removeChild(postDiv);
+                }
+
+                if (url == "") {
+                    plc.style.display = "none";
+                    this._currentPreviewURL = '';
+                    return;
+                }
+
+                postDiv = document.createElement("div");
+                postDiv.dataset.width = "500";
+                postDiv.dataset.href = url;
+                postDiv.classList.add("fb-post");
+                postDiv.dataset.href = url;
+                plc.appendChild(postDiv);
+                FB.XFBML.parse(plc, function () {
+                    plc.style.display = "block";
+                });
+
+                this._currentPreviewURL = url;
+
+            }.bind(this), 40);
+
+
+        },
+
+        // Element Lifecycle
+        attachedCallback: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
