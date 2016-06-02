@@ -6,6 +6,9 @@
     <title>pnsk-structured-editor</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="./minimalComponent.js"></script>
+    <!-- Sadly it doesn't seem possible to include the Facebook SDK from within a component
+        as it needs to be in the main head -->
+    <script src="//connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v2.5" async></script>
     <link rel="import" href="../../pnsk-structured-editor-prosemirror/pnsk-structured-editor-prosemirror.html">
     <link rel="import" href="../pnsk-structured-editor-blockquote.html">
     <link rel="import" href="../pnsk-structured-editor-anchor.html">
@@ -13,7 +16,9 @@
     <link rel="import" href="../pnsk-structured-editor-legacy-html.html">
     <link rel="import" href="../pnsk-structured-editor-image.html">
     <link rel="import" href="../pnsk-structured-editor-iframe.html">
+    <link rel="import" href="../pnsk-structured-editor-facebook-post.html">
     <link rel="import" href="../pnsk-structured-editor-tweet.html">
+    <link rel="import" href="../pnsk-structured-editor-twitter-timeline.html">
     <link rel="import" href="../pnsk-structured-editor-youtube.html">
     <link rel="import" href="../pnsk-structured-editor-vimeo.html">
     <link rel="import" href="../pnsk-structured-editor-soundcloud.html">
@@ -40,7 +45,11 @@
                     {"type": "youtube", "element":"pnsk-structured-editor-youtube", "lable":"YouTube video"}, 
                     {"type": "vimeo", "element":"pnsk-structured-editor-vimeo", "lable":"Vimeo video"}, 
                     {"type": "soundcloud", "element":"pnsk-structured-editor-soundcloud", "lable":"Soundcloud track"}, 
+                    {"type": "facebook-post", "element":"pnsk-structured-editor-facebook-post", "lable":"Facebook post"}, 
                     {"type": "tweet", "element":"pnsk-structured-editor-tweet", "lable":"Tweet", 
+                        "config":{"oembedProxyUrl":"http://localhost:8080/journal/listen/?cmd=OembedProxy&type=tweet&url="} 
+                    },
+                    {"type": "twitter-timeline", "element":"pnsk-structured-editor-twitter-timeline", "lable":"Twitter timeline", 
                         "config":{"oembedProxyUrl":"http://localhost:8080/journal/listen/?cmd=OembedProxy&type=tweet&url="} 
                     },
                     {"type": "iframe", "element":"pnsk-structured-editor-iframe", "lable":"Iframe (Last resort!)"}
@@ -51,8 +60,6 @@
             <input type="text" name="editor-output" class="editorstate"
                    value=''>
         </pnsk-structured-editor>
-
-        <br>
         <input type="submit">
     </form>
 

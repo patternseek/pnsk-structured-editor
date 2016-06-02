@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer-micro.html">
 
 <style>
-    pnsk-structured-editor-tweet .preview {
+    pnsk-structured-editor-twitter-timeline .preview {
         background-color: white;
         margin-bottom: 12px;
         padding: 8px;
@@ -10,7 +10,7 @@
     }
 </style>
 
-<template id="pnsk-structured-editor-tweet" noshadowroot>
+<template id="pnsk-structured-editor-twitter-timeline" noshadowroot>
     <div class="preview"></div>
         <span class="inputswrapper">
             <label>
@@ -40,19 +40,19 @@
 
         return t;
     }(document, "script", "twitter-wjs"));
-    
+
     Polymer({
-        is: 'pnsk-structured-editor-tweet',
+        is: 'pnsk-structured-editor-twitter-timeline',
         behaviors: [MinimalComponent],
 
-        template: currentImport.querySelector('#pnsk-structured-editor-tweet'),
+        template: currentImport.querySelector('#pnsk-structured-editor-twitter-timeline'),
 
         properties: {
             oembedProxyUrl: String,
             _currentPreviewURL: String
         },
 
-        dataType: "tweet",
+        dataType: "twitter-timeline",
 
         getState: function () {
             return {
@@ -96,6 +96,7 @@
                         }
                     }
                 }.bind(this);
+
                 req.open("GET", this.oembedProxyUrl + encodeURIComponent(url), true);
                 req.send();
                 plc.style.display = "none";
