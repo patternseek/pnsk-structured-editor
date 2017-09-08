@@ -389,6 +389,9 @@
             try {
                 input = JSON.parse(this.querySelector("input").value);
             } catch (e) {
+              if (this.textOnly == true) {
+                this.addBlock(this._typeHandlers["rich-text"], 0, null);
+              }
                 return;
             }
 
