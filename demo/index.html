@@ -10,6 +10,7 @@
         as it needs to be in the main head -->
     <script src="//connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v2.5" async></script>
     <link rel="import" href="../../pnsk-structured-editor-prosemirror/pnsk-structured-editor-prosemirror.html">
+    <link rel="import" href="../pnsk-structured-editor-quill.html">
     <link rel="import" href="../pnsk-structured-editor-blockquote.html">
     <link rel="import" href="../pnsk-structured-editor-anchor.html">
     <link rel="import" href="../pnsk-structured-editor-javascript.html">
@@ -32,7 +33,24 @@
 
         <pnsk-structured-editor
                 available-types='[
-                    {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Text"},
+                    {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Legacy Text"},
+                    {"type": "quill", "element":"pnsk-structured-editor-quill", "lable":"Text",
+                        "config":{ 
+                            "editorconfig":{
+                                "placeholder": "Type here...",
+                                "formats": ["bold","italic","underline","link", "list","header"],
+                                "modules":{
+                                    "toolbar": [
+                                        ["bold", "italic", "underline"], 
+                                        [{ "header": [2,3,false] }],
+                                        [{ "list": "ordered" }, { "list": "bullet" }],
+                                        ["link"]
+                                    ]
+                                },
+                                "theme": "snow"
+                            } 
+                        }
+                     },
                     {"type": "image", "element":"pnsk-structured-editor-image", "lable":"External image"},
                     {"type": "blockquote", "element":"pnsk-structured-editor-blockquote", "lable":"Blockquote",
                         "config":{
