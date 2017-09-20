@@ -23,6 +23,7 @@
     <link rel="import" href="../pnsk-structured-editor-youtube.html">
     <link rel="import" href="../pnsk-structured-editor-vimeo.html">
     <link rel="import" href="../pnsk-structured-editor-soundcloud.html">
+    <!-- Load last to avoid requirejs errors, in quill currently -->
     <link rel="import" href="../pnsk-structured-editor.html">
     
 </head>
@@ -33,7 +34,7 @@
 
         <pnsk-structured-editor
                 available-types='[
-                    {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Legacy Text"},
+                    {"type": "rich-text", "element":"pnsk-structured-editor-prosemirror", "lable":"Legacy Text "},
                     {"type": "quill", "element":"pnsk-structured-editor-quill", "lable":"Text",
                         "config":{ 
                             "editorconfig":{
