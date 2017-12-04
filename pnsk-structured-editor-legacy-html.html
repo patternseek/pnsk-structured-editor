@@ -1,7 +1,4 @@
 <link rel="import" href="../polymer/polymer-micro.html">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify-html.js"></script>
 
 <template id="pnsk-structured-editor-legacy-html" noshadowroot>
 
@@ -47,7 +44,7 @@
         dataType: "legacy-html",
 
       editor: null,
-      beautify: null,
+      html_beautify: null,
 
         getState: function () {
           return this.editor.getValue();
@@ -55,7 +52,7 @@
 
         setState: function (state) {
           if (this.editor !== null) {
-            this.editor.setValue(html_beautify(state));
+            this.editor.setValue(this.html_beautify(state));
             this.editor.selection.clearSelection();
           }
         },
@@ -69,8 +66,12 @@
         // Element Lifecycle
 
         created: function () {
+
+          require(["https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify-html"], function (html_beautify) {
+            this.html_beautify = html_beautify.html_beautify;
+          });
+
           this.editor = ace.edit(this.root.querySelector(".legacyhtmlbox"));
-          this.beautify = ace.require('ace/ext/beautify');
           var session = this.editor.getSession();
           var renderer = this.editor.renderer;
           //var selection = session.getSelection();
@@ -85,8 +86,6 @@
           this.editor.setTheme("ace/theme/twilight");
           session.setMode("ace/mode/html");
           this.editor.resize(true);
-          
-          
           
             this.root.querySelector(".legacyhtmlbox").addEventListener("change", this._onChange.bind(this));
             this.root.querySelector(".legacyhtmlbox").addEventListener("keyup", this._onChange.bind(this));
