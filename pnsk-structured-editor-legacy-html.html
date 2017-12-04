@@ -1,7 +1,38 @@
 <link rel="import" href="../polymer/polymer-micro.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify-html.js"></script>
 
 <template id="pnsk-structured-editor-legacy-html" noshadowroot>
-    <textarea rows="3" cols="30" class="legacyhtmlbox"></textarea>
+
+    <style type="text/css" media="screen">
+        .editor-mask {
+            height: 400px;
+            overflow-y: hidden;
+        }
+
+        .editor-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .legacyhtmlbox {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .editor .ace_sb {
+            display: none;
+        }
+    </style>
+    <div class="editor-mask">
+        <div class="editor-container">
+            <div class="legacyhtmlbox"></div>
+        </div>
+    </div>
     <content></content>
 </template>
 
@@ -15,40 +46,53 @@
 
         dataType: "legacy-html",
 
+      editor: null,
+      beautify: null,
+
         getState: function () {
-            return this.root.querySelector(".legacyhtmlbox").value;
+          return this.editor.getValue();
         },
 
         setState: function (state) {
-            this.root.querySelector(".legacyhtmlbox").value = state;
+          if (this.editor !== null) {
+            this.editor.setValue(html_beautify(state));
+            this.editor.selection.clearSelection();
+          }
         },
 
         _onChange: function () {
             var event = new Event('pnsk-component-stateChanged');
             this.dispatchEvent(event);
-            this.updateHeight();
         },
 
-        updateHeight: function () {
-            var textBox = this.qs("textarea");
-            if (textBox.clientHeight == textBox.scrollHeight) {
-                textBox.style.height = "auto";
-            }
-            textBox.style.height = textBox.scrollHeight + 'px'
-        },
 
         // Element Lifecycle
 
         created: function () {
+          this.editor = ace.edit(this.root.querySelector(".legacyhtmlbox"));
+          this.beautify = ace.require('ace/ext/beautify');
+          var session = this.editor.getSession();
+          var renderer = this.editor.renderer;
+          //var selection = session.getSelection();
+
+          session.setUseWrapMode(true);
+          session.setWrapLimitRange(null, null);
+          //renderer.setPrintMarginColumn(80);
+          session.setUseSoftTabs(true);
+          session.setTabSize(4);
+          this.editor.setHighlightSelectedWord(true);
+          this.editor.setShowPrintMargin(false);
+          this.editor.setTheme("ace/theme/twilight");
+          session.setMode("ace/mode/html");
+          this.editor.resize(true);
+          
+          
+          
             this.root.querySelector(".legacyhtmlbox").addEventListener("change", this._onChange.bind(this));
             this.root.querySelector(".legacyhtmlbox").addEventListener("keyup", this._onChange.bind(this));
             this.root.querySelector(".legacyhtmlbox").addEventListener("paste", this._onChange.bind(this));
             this.root.querySelector(".legacyhtmlbox").addEventListener("cut", this._onChange.bind(this));
 
-        },
-
-        attached: function () {
-            this.updateHeight();
         }
 
     });
