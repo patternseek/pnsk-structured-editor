@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer-micro.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+<script src="../requirejs/require.js"></script>
 
 <template id="pnsk-structured-editor-legacy-html" noshadowroot>
 
@@ -46,13 +48,20 @@
       editor: null,
       html_beautify: null,
 
+      thisDir: currentImportURL.substring(0, currentImportURL.lastIndexOf("/")),
+
         getState: function () {
           return this.editor.getValue();
         },
 
         setState: function (state) {
           if (this.editor !== null) {
-            this.editor.setValue(this.html_beautify(state));
+            if (this.html_beautify !== null) {
+              this.editor.setValue(this.html_beautify(state));
+            } else {
+              this.editor.setValue(state);
+            }
+            
             this.editor.selection.clearSelection();
           }
         },
@@ -67,9 +76,20 @@
 
         created: function () {
 
-          require(["https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.4/beautify-html"], function (html_beautify) {
-            this.html_beautify = html_beautify.html_beautify;
+          var bowerpath = this.thisDir + '/../';
+
+          requirejs.config({
+            paths: {
+              'beautify': bowerpath + 'js-beautify/js/lib/beautify',
+              'beautify-css': bowerpath + 'js-beautify/js/lib/beautify-css',
+              'beautify-html': bowerpath + 'js-beautify/js/lib/beautify-html',
+            }
           });
+
+          require(['beautify-html'], function (html_beautify) {
+            this.html_beautify = html_beautify.html_beautify;
+            this.setState(this.getState());
+          }.bind(this));
 
           this.editor = ace.edit(this.root.querySelector(".legacyhtmlbox"));
           var session = this.editor.getSession();
