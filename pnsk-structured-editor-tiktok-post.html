@@ -1,0 +1,106 @@
+<link rel="import" href="../polymer/polymer-micro.html">
+
+<style>
+    pnsk-structured-editor-tiktok-post .preview {
+        background-color: white;
+        margin-bottom: 12px;
+        padding: 8px;
+        display: none;
+        width: 100%;
+    }
+</style>
+
+<template id="pnsk-structured-editor-tiktok-post" noshadowroot>
+
+    <div class="preview">
+
+    </div>
+    <span class="inputswrapper">
+        <label>
+            URL
+            <input class="url" type="url">
+        </label>
+    </span>
+
+    <content></content>
+</template>
+
+
+<script>
+
+    Polymer({
+        is: 'pnsk-structured-editor-tiktok-post',
+        behaviors: [MinimalComponent],
+
+        template: currentImport.querySelector('#pnsk-structured-editor-tiktok-post'),
+
+        properties: {
+            _currentPreviewURL: String,
+            _currentPreviewType: String
+        },
+
+        dataType: "tiktok-post",
+
+        getState: function () {
+            return {
+                'url': this.qs(".url").value
+            };
+        },
+
+        setState: function (state) {
+            this.qs(".url").value = state.url;
+            this._updatePreview();
+        },
+
+        _onChange: function () {
+            var event = new Event('pnsk-component-stateChanged');
+            this.dispatchEvent(event);
+            this._updatePreview();
+        },
+
+        _updatePreview: function () {
+
+            // Paste fires before URL is updated.
+            indow.setTimeout(function () {
+                var req = new XMLHttpRequest();
+                var plc = this.qs(".preview");
+                var url = this.qs(".url").value;
+
+                if (this._currentPreviewURL == url) {
+                    return;
+                }
+
+                req.onreadystatechange = function () {
+                    if (req.readyState == XMLHttpRequest.DONE) {
+                        if (req.status == 200) {
+                            plc.innerHTML = JSON.parse(req.responseText).html;
+                            plc.style.display = "block";
+                            twttr.widgets.load(plc);
+                            this._currentPreviewURL = url;
+                        }
+                        else {
+                            plc.style.display = "none";
+                            this._currentPreviewURL = '';
+                        }
+                    }
+                }.bind(this);
+                req.open("GET", "https://www.tiktok.com/oembed?url=" + encodeURIComponent(url), true);
+                req.send();
+                plc.style.display = "none";
+                this._currentPreviewURL = '';
+
+            }.bind(this), 40);
+
+
+        },
+
+        // Element Lifecycle
+        attachedCallback: function () {
+            this.qs(".inputswrapper").addEventListener("change", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("cut", this._onChange.bind(this));
+            this.qs(".inputswrapper").addEventListener("paste", this._onChange.bind(this));
+        },
+
+    });
+
+</script>
