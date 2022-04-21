@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer-micro.html">
-<script src="https://cdn.quilljs.com/1.3.2/quill.js"></script>
+<script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
 
 <template id="pnsk-structured-editor-quill" noshadowroot>
 
@@ -22,6 +22,11 @@
         pnsk-structured-editor-quill > #editor .ql-editor h2,
         pnsk-structured-editor-quill > #editor .ql-editor h1 {
             color: darkgrey !important;
+        }
+
+        /* Stop tooltip / popup appearing partially off screen */
+        pnsk-structured-editor-quill > #editor .ql-tooltip {
+            left: 0 !important;
         }
 
         /*! Copied from https://cdn.quilljs.com/1.3.2/quill.snow.css
